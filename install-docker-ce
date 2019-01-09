@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+apt-get update
+apt-get install -y \
+    apt-transport-https=1.2.15ubuntu0.2 \
+    ca-certificates=20160104ubuntu1 \
+    curl \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+   $(lsb_release -cs) \
+   stable"
+
+apt-get update && apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 18.06 | head -1 | awk '{print $3}')
+apt-mark hold docker-ce
+
+systemctl enable docker && systemctl start docker
+usermod -aG docker "${USER}"
+
+echo 
+echo
+echo kogout and log back in to run 'docker info'
+echo
